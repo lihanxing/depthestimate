@@ -2,6 +2,7 @@ import os
 import glob
 import argparse
 import matplotlib
+import time
 
 # Keras / TensorFlow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
@@ -36,9 +37,14 @@ outputs = predict(model, inputs)
 #matplotlib problem on ubuntu terminal fix
 #matplotlib.use('TkAgg')   
 
+#按时间保存预测后图片
+uuid_str = time.strftime("%Y-%m-%d %H-%M-%S",time.localtime()) 
+tmp_file_name ='%s.png' % uuid_str
+
+
 # Display results
 viz = display_images(outputs.copy(), inputs.copy())
 plt.figure(figsize=(10,5))
 plt.imshow(viz)
-plt.savefig('test.png')
+plt.savefig('test_result/'+tmp_file_name)
 plt.show()
