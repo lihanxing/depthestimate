@@ -6,3 +6,8 @@
 *.jpg
 *.obj
 /test_result
+/dataset
+/*rar
+/*csv
+*rar
+*csv

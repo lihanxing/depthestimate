@@ -1,5 +1,5 @@
 import numpy as np
-from utils import DepthNorm
+from utils import DepthNorm, load_images
 from io import BytesIO
 from PIL import Image
 from zipfile import ZipFile
@@ -11,36 +11,37 @@ def extract_zip(input_zip):
     return {name: input_zip.read(name) for name in input_zip.namelist()}
 
 # 这里的功能是对nyu图片进行缩放
-def nyu_resize(img, resolution=480, padding=6):
+def cmp_resize(img, resolution=480, padding=6):
     # skimage.transform实现图片缩放与形变
     from skimage.transform import resize
     return resize(img, (resolution, int(resolution*4/3)), preserve_range=True, mode='reflect', anti_aliasing=True )
 
-def get_nyu_data(batch_size, nyu_data_zipfile='nyu_data.zip'):
-    data = extract_zip(nyu_data_zipfile)
 
-    nyu2_train = list((row.split(',') for row in (data['data/nyu2_train.csv']).decode("utf-8").split('\n') if len(row) > 0))
-    nyu2_test = list((row.split(',') for row in (data['data/nyu2_test.csv']).decode("utf-8").split('\n') if len(row) > 0))
+def get_cmp_data(batch_size):
+    data = load_images('./dataset/')
 
-    shape_rgb = (batch_size, 480, 640, 3)
-    shape_depth = (batch_size, 240, 320, 1)
+    cmp2_train = list((row.split(',') for row in (data['train.csv']).decode("utf-8").split('\n') if len(row) > 0))
+    cmp2_test = list((row.split(',') for row in (data['test.csv']).decode("utf-8").split('\n') if len(row) > 0))
+
+    shape_rgb = (batch_size, 256, 256, 3)
+    shape_depth = (batch_size, 256, 256, 1)
 
     # Helpful for testing...
     if False:
         nyu2_train = nyu2_train[:10]
         nyu2_test = nyu2_test[:10]
 
-    return data, nyu2_train, nyu2_test, shape_rgb, shape_depth
+    return data, cmp2_train, cmp2_test, shape_rgb, shape_depth
 
 def get_nyu_train_test_data(batch_size):
-    data, nyu2_train, nyu2_test, shape_rgb, shape_depth = get_nyu_data(batch_size)
+    data, nyu2_train, nyu2_test, shape_rgb, shape_depth = get_cmp_data(batch_size)
 
-    train_generator = NYU_BasicAugmentRGBSequence(data, nyu2_train, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
-    test_generator = NYU_BasicRGBSequence(data, nyu2_test, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
+    train_generator = CMP_BasicAugmentRGBSequence(data, nyu2_train, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
+    test_generator = CMP_BasicRGBSequence(data, nyu2_test, batch_size=batch_size, shape_rgb=shape_rgb, shape_depth=shape_depth)
 
     return train_generator, test_generator
 
-class NYU_BasicAugmentRGBSequence(Sequence):
+class CMP_BasicAugmentRGBSequence(Sequence):
     def __init__(self, data, dataset, batch_size, shape_rgb, shape_depth, is_flip=False, is_addnoise=False, is_erase=False):
         self.data = data
         self.dataset = dataset
@@ -72,8 +73,8 @@ class NYU_BasicAugmentRGBSequence(Sequence):
             y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(480,640,1)/255*self.maxDepth,0,self.maxDepth)
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
-            batch_x[i] = nyu_resize(x, 480)
-            batch_y[i] = nyu_resize(y, 240)
+            batch_x[i] = cmp_resize(x, 256)
+            batch_y[i] = cmp_resize(y, 256)
 
             if is_apply_policy: batch_x[i], batch_y[i] = self.policy(batch_x[i], batch_y[i])
 
@@ -83,7 +84,7 @@ class NYU_BasicAugmentRGBSequence(Sequence):
 
         return batch_x, batch_y
 
-class NYU_BasicRGBSequence(Sequence):
+class CMP_BasicRGBSequence(Sequence):
     def __init__(self, data, dataset, batch_size,shape_rgb, shape_depth):
         self.data = data
         self.dataset = dataset
@@ -107,8 +108,8 @@ class NYU_BasicRGBSequence(Sequence):
             y = np.asarray(Image.open(BytesIO(self.data[sample[1]])), dtype=np.float32).reshape(480,640,1).copy().astype(float) / 10.0
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
-            batch_x[i] = nyu_resize(x, 480)
-            batch_y[i] = nyu_resize(y, 240)
+            batch_x[i] = cmp_resize(x, 256)
+            batch_y[i] = cmp_resize(y, 256)
 
             # DEBUG:
             #self.policy.debug_img(batch_x[i], np.clip(DepthNorm(batch_y[i])/maxDepth,0,1), idx, i)
