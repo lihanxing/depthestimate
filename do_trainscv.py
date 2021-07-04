@@ -10,6 +10,8 @@ for i,j,k in os.walk(filePath):
     stu2 = i+"/"
     stu1 =stu1+"".join(k[0:1])
     stu2 =stu2+"".join(k[1:2])
+    stu1 = "dataset/train/"+stu1
+    stu2 = "dataset/train/"+stu2
 
     if tmp == 1:
         tmp += 1

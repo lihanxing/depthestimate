@@ -14,14 +14,19 @@ def extract_zip(input_zip):
 def cmp_resize(img, resolution=480, padding=6):
     # skimage.transform实现图片缩放与形变
     from skimage.transform import resize
-    return resize(img, (resolution, int(resolution*4/3)), preserve_range=True, mode='reflect', anti_aliasing=True )
+    return resize(img, (resolution, int(resolution)), preserve_range=True, mode='reflect', anti_aliasing=True )
 
 
 def get_cmp_data(batch_size):
     data = extract_zip("dataset.zip")
 
-    cmp2_train = list((row.split(',') for row in (data['train.csv']).decode("utf-8").split('\n') if len(row) > 0))
-    cmp2_test = list((row.split(',') for row in (data['test.csv']).decode("utf-8").split('\n') if len(row) > 0))
+    cmp2_train_input = open("train.csv","r")
+    cmp2_train_file = cmp2_train_input.read()
+    cmp2_train = list((row.split(',') for row in (cmp2_train_file).split('\n') if len(row) > 0))
+
+    cmp2_test_input = open("test.csv","r")
+    cmp2_test_file = cmp2_test_input.read()
+    cmp2_test = list((row.split(',') for row in (cmp2_test_file).split('\n') if len(row) > 0))
 
     shape_rgb = (batch_size, 256, 256, 3)
     shape_depth = (batch_size, 256, 256, 1)
@@ -70,8 +75,8 @@ class CMP_BasicAugmentRGBSequence(Sequence):
 
             sample = self.dataset[index]
 
-            x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) )).reshape(480,640,3)/255,0,1)
-            y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(480,640,1)/255*self.maxDepth,0,self.maxDepth)
+            x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) )).reshape(512,512,3)/255,0,1)
+            y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,1)/255*self.maxDepth,0,self.maxDepth)
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = cmp_resize(x, 256)
@@ -105,8 +110,8 @@ class CMP_BasicRGBSequence(Sequence):
 
             sample = self.dataset[index]
 
-            x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]))).reshape(480,640,3)/255,0,1)
-            y = np.asarray(Image.open(BytesIO(self.data[sample[1]])), dtype=np.float32).reshape(480,640,1).copy().astype(float) / 10.0
+            x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]))).reshape(512,512,3)/255,0,1)
+            y = np.asarray(Image.open(BytesIO(self.data[sample[1]])), dtype=np.float32).reshape(512,512,1).copy().astype(float) / 10.0
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = cmp_resize(x, 256)
