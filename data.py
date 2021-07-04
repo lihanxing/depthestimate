@@ -11,7 +11,7 @@ def extract_zip(input_zip):
     return {name: input_zip.read(name) for name in input_zip.namelist()}
 
 # 这里的功能是对nyu图片进行缩放
-def cmp_resize(img, resolution=480, padding=6):
+def cmp_resize(img, resolution=512, padding=6):
     # skimage.transform实现图片缩放与形变
     from skimage.transform import resize
     return resize(img, (resolution, int(resolution)), preserve_range=True, mode='reflect', anti_aliasing=True )
@@ -28,7 +28,7 @@ def get_cmp_data(batch_size):
     cmp2_test_file = cmp2_test_input.read()
     cmp2_test = list((row.split(',') for row in (cmp2_test_file).split('\n') if len(row) > 0))
 
-    shape_rgb = (batch_size, 256, 256, 3)
+    shape_rgb = (batch_size, 512, 512, 3)
     shape_depth = (batch_size, 256, 256, 1)
 
     # Helpful for testing...
@@ -77,9 +77,10 @@ class CMP_BasicAugmentRGBSequence(Sequence):
 
             x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) )).reshape(512,512,3)/255,0,1)
             y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,1)/255*self.maxDepth,0,self.maxDepth)
+            print(x,y)
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
-            batch_x[i] = cmp_resize(x, 256)
+            batch_x[i] = cmp_resize(x, 512)
             batch_y[i] = cmp_resize(y, 256)
 
             if is_apply_policy: batch_x[i], batch_y[i] = self.policy(batch_x[i], batch_y[i])
@@ -114,7 +115,7 @@ class CMP_BasicRGBSequence(Sequence):
             y = np.asarray(Image.open(BytesIO(self.data[sample[1]])), dtype=np.float32).reshape(512,512,1).copy().astype(float) / 10.0
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
-            batch_x[i] = cmp_resize(x, 256)
+            batch_x[i] = cmp_resize(x, 512)
             batch_y[i] = cmp_resize(y, 256)
 
             # DEBUG:
