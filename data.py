@@ -84,7 +84,7 @@ class CMP_BasicAugmentRGBSequence(Sequence):
             x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) )).reshape(512,512,3)/255,0,1)
             y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,1)/255*self.maxDepth,0,self.maxDepth)
             
-            y = DepthNorm(y, maxDepth=self.maxDepth)
+            # y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = cmp_resize(x, 512)
             batch_y[i] = cmp_resize(y, 256)
@@ -119,7 +119,7 @@ class CMP_BasicRGBSequence(Sequence):
 
             x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]))).reshape(512,512,3)/255,0,1)
             y = np.asarray(Image.open(BytesIO(self.data[sample[1]])), dtype=np.float32).reshape(512,512,1).copy().astype(float) / 10.0
-            y = DepthNorm(y, maxDepth=self.maxDepth)
+            # y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = cmp_resize(x, 512)
             batch_y[i] = cmp_resize(y, 256)
@@ -203,6 +203,7 @@ class Unreal_BasicAugmentRGBSequence(Sequence):
             
             x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) ))/255, 0, 1)
             y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,), 10, self.maxDepth)
+            # y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = x
             batch_y[i] = y
