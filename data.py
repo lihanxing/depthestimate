@@ -6,6 +6,12 @@ from zipfile import ZipFile
 from keras.utils import Sequence
 from augment import BasicPolicy
 
+
+
+#================
+# Real dataset
+#================
+
 def extract_zip(input_zip):
     input_zip=ZipFile(input_zip)
     return {name: input_zip.read(name) for name in input_zip.namelist()}
@@ -77,7 +83,7 @@ class CMP_BasicAugmentRGBSequence(Sequence):
 
             x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) )).reshape(512,512,3)/255,0,1)
             y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,1)/255*self.maxDepth,0,self.maxDepth)
-            print(x,y)
+            
             y = DepthNorm(y, maxDepth=self.maxDepth)
 
             batch_x[i] = cmp_resize(x, 512)
@@ -131,28 +137,28 @@ class CMP_BasicRGBSequence(Sequence):
 import cv2
 from skimage.transform import resize
 
-def get_unreal_data(batch_size, unreal_data_file='unreal_data.h5'):
-    shape_rgb = (batch_size, 480, 640, 3)
-    shape_depth = (batch_size, 240, 320, 1)
+def get_unreal_data(batch_size):
+    shape_rgb = (batch_size, 512, 512, 3)
+    shape_depth = (batch_size, 512, 512, 1)
 
     # Open data file
-    import h5py
-    data = h5py.File(unreal_data_file, 'r')
+    
+    data = extract_zip("dataset.zip")
 
-    # Shuffle
-    from sklearn.utils import shuffle
-    keys = shuffle(list(data['x'].keys()), random_state=0)
+    cmp2_train_input = open("train.csv","r")
+    cmp2_train_file = cmp2_train_input.read()
+    cmp2_train = list((row.split(',') for row in (cmp2_train_file).split('\n') if len(row) > 0))
 
-    # Split some validation
-    unreal_train = keys[:len(keys)-100]
-    unreal_test = keys[len(keys)-100:]
+    cmp2_test_input = open("test.csv","r")
+    cmp2_test_file = cmp2_test_input.read()
+    cmp2_test = list((row.split(',') for row in (cmp2_test_file).split('\n') if len(row) > 0))
 
     # Helpful for testing...
     if False:
         unreal_train = unreal_train[:10]
         unreal_test = unreal_test[:10]
 
-    return data, unreal_train, unreal_test, shape_rgb, shape_depth
+    return data, cmp2_train, cmp2_test, shape_rgb, shape_depth
 
 def get_unreal_train_test_data(batch_size):
     data, unreal_train, unreal_test, shape_rgb, shape_depth = get_unreal_data(batch_size)
@@ -190,13 +196,13 @@ class Unreal_BasicAugmentRGBSequence(Sequence):
 
             sample = self.dataset[index]
             
-            rgb_sample = cv2.imdecode(np.asarray(self.data['x/{}'.format(sample)]), 1)
-            depth_sample = self.data['y/{}'.format(sample)] 
-            depth_sample = resize(depth_sample, (self.shape_depth[1], self.shape_depth[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
+            ##cv2.imdecode()函数从指定的内存缓存中读取数据，并把数据转换(解码)成图像格式;主要用于从网络传输数据中恢复出图像
+            # rgb_sample = cv2.imdecode(np.asarray(self.data['x/{}'.format(sample)]), 1)
+            # depth_sample = self.data['y/{}'.format(sample)] 
+            # depth_sample = resize(depth_sample, (self.shape_depth[1], self.shape_depth[2]), preserve_range=True, mode='reflect', anti_aliasing=True )
             
-            x = np.clip(rgb_sample/255, 0, 1)
-            y = np.clip(depth_sample, 10, self.maxDepth)
-            y = DepthNorm(y, maxDepth=self.maxDepth)
+            x = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[0]]) ))/255, 0, 1)
+            y = np.clip(np.asarray(Image.open( BytesIO(self.data[sample[1]]) )).reshape(512,512,), 10, self.maxDepth)
 
             batch_x[i] = x
             batch_y[i] = y
