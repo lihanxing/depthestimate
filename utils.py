@@ -11,7 +11,7 @@ def predict(model, images, minDepth=10, maxDepth=1000, batch_size=2):
     # Compute predictions
     predictions = model.predict(images, batch_size=batch_size)
     # Put in expected range
-    return np.clip(DepthNorm(predictions, maxDepth=maxDepth), minDepth, maxDepth) / maxDepth
+    return np.clip(predictions, minDepth, maxDepth)
 
 def scale_up(scale, images):
     from skimage.transform import resize
