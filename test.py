@@ -43,7 +43,7 @@ tmp_file_name ='%s.png' % uuid_str
 
 
 # Display results
-viz = display_images(outputs.copy(), inputs.copy())
+viz = display_images(outputs.copy())
 plt.figure(figsize=(10,5))
 plt.imshow(viz)
 plt.savefig('test_result/'+tmp_file_name)
