@@ -71,8 +71,10 @@ def display_images(outputs, inputs=None, gt=None, is_colormap=True, is_rescale=T
 
         img_set = np.hstack(imgs)
         all_images.append(img_set)
+        
 
     all_images = np.stack(all_images)
+    
     
     return skimage.util.montage(all_images, multichannel=True, fill=(0,0,0))
 

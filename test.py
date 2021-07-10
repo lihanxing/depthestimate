@@ -3,6 +3,8 @@ import glob
 import argparse
 import matplotlib
 import time
+from PIL import Image
+import cv2
 
 # Keras / TensorFlow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
@@ -29,6 +31,8 @@ print('\nModel loaded ({0}).'.format(args.model))
 
 # Input images
 inputs = load_images( glob.glob(args.input) )
+temp = Image.open(args.input)
+ImgSize = temp.size
 print('\nLoaded ({0}) images of size {1}.'.format(inputs.shape[0], inputs.shape[1:]))
 
 # Compute results
@@ -44,7 +48,10 @@ tmp_file_name ='%s.png' % uuid_str
 
 # Display results
 viz = display_images(outputs.copy())
-plt.figure(figsize=(10,5))
+plt.figure(figsize=(6.59,6.59),dpi=100)
 plt.imshow(viz)
-plt.savefig('test_result/'+tmp_file_name)
+
+plt.gca().xaxis.set_major_locator(plt.NullLocator())
+plt.gca().yaxis.set_major_locator(plt.NullLocator())
+plt.savefig('test_result/'+tmp_file_name,bbox_inches='tight',pad_inches = 0)
 plt.show()
