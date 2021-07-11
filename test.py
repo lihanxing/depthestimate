@@ -19,7 +19,7 @@ from matplotlib import pyplot as plt
 parser = argparse.ArgumentParser(description='High Quality Monocular Depth Estimation via Transfer Learning')
 parser.add_argument('--model', default='nyu.h5', type=str, help='Trained Keras model file.')
 parser.add_argument('--input', default='examples/*.png', type=str, help='Input filename or folder.')
-# parser.add_argument('--output',default='test_result', type=str, help='Output filename or folder.')
+parser.add_argument('--output',default='test_result', type=str, help='Output filename or folder.')
 args = parser.parse_args()
 
 # Custom object needed for inference and training
@@ -49,12 +49,12 @@ uuid_str = time.strftime("%Y-%m-%d %H-%M-%S",time.localtime())
 tmp_file_name ='%s.png' % uuid_str
 
 
-# Display results
+# output Images
 viz = display_images(outputs.copy())
 plt.figure(figsize=(6.59,6.59),dpi=100)
 plt.imshow(viz)
 
 plt.gca().xaxis.set_major_locator(plt.NullLocator())
 plt.gca().yaxis.set_major_locator(plt.NullLocator())
-plt.savefig('test_result/'+tmp_file_name,bbox_inches='tight',pad_inches = 0)
+plt.savefig(("%s"%args.output)+"/depth.png",bbox_inches='tight',pad_inches = 0)
 plt.show()
