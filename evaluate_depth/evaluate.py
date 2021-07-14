@@ -36,9 +36,9 @@ def report_score(score, out_p):
 
     dump_2_json(result,out_p)
 
-def compute_rmse(result_image,gt_image):
-    error=(result_image-gt_image)**2
-    mse=np.mean(error)
+def compute_rmse(result_image,gt_image,mask):
+    error=(result_image*mask-gt_image*mask)**2
+    mse=np.sum(error)/np.sum(mask)
     rmse=np.sqrt(mse)
     return rmse
 
@@ -47,26 +47,19 @@ def evaluate_rmse(submit_path,standard_path):
     total_mmse=0
     total_count=0
     for image_name in image_list:
-        gt_path=os.path.join(standard_path,image_name)
+        gt_path=os.path.join(standard_path,image_name,"depth.png")
         print(gt_path)
         gt_image=cv2.imread(gt_path,cv2.IMREAD_ANYCOLOR|cv2.IMREAD_ANYDEPTH)
-        # cv2.namedWindow('input_image', cv2.WINDOW_AUTOSIZE)
-        # cv2.imshow('input_image', gt_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         gt_image=(1-(gt_image/255.0))*10
+        valid_mask=(gt_image>0).astype(np.float)
         print(type(gt_image))
         print(gt_image.shape)
-        result_path=os.path.join(submit_path,image_name)
+        result_path=os.path.join(submit_path,image_name,"depth.png")
         print(result_path)
         result_image=cv2.imread(result_path,cv2.IMREAD_GRAYSCALE)
-        # cv2.namedWindow('input_image', cv2.WINDOW_AUTOSIZE)
-        # cv2.imshow('input_image', result_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         print(type(result_image))
         print(result_image.shape)
-        mmse=compute_rmse(result_image,gt_image)
+        mmse=compute_rmse(result_image,gt_image,valid_mask)
         total_count+=1
         total_mmse+=mmse
     mean_mmse=total_mmse/total_count
@@ -85,10 +78,10 @@ if __name__=="__main__":
         input_params = json.load(load_f)
 
     # 标准答案路径
-    standard_path="./gt_dir/3dfront-dataset-batch-split-10k-0-cam-0/"
+    standard_path="./gt_dir/"
 
     # 选手提交的结果文件路径
-    submit_path="./result_dir/3dfront-dataset-batch-split-10k-0-cam-0/"
+    submit_path="./result_dir/"
 
     mean_rmse=evaluate_rmse(submit_path,standard_path)
     report_score(mean_rmse,out_path)

@@ -1,3 +1,7 @@
+from numpy import testing
+
+
+#生成test.csv
 import csv
 import os
 f = open('test.csv','w',encoding='utf-8',newline="")

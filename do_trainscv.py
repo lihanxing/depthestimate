@@ -1,3 +1,4 @@
+#生成train.csv
 import csv
 import os
 f = open('train.csv','w',encoding='utf-8',newline="")

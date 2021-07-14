@@ -1,4 +1,4 @@
-
+#这段代码是批量生成预测图
 import os
 import time
 
@@ -12,10 +12,10 @@ for i,j,k in os.walk(filePath):
 
     if a>=4:
         break
-    path = r"./result/"
+    path = r"./result1/"
     path = path+i[14:]
     os.makedirs(path)
-    os.system('python test.py '+"--model "+"models/1625803710-n875-e20-bs8-lr0.0001-densedepth_nyu/weights.20-69.85.hdf5 "+"--input "+i+"/color.jpg "+"--output "+path)
+    os.system('python test.py '+"--model "+"models/1626145328-n875-e100-bs8-lr0.0001-densedepth_nyu/model.h5 "+"--input "+i+"/color.jpg "+"--output "+path)
     # tmp+=1
    
    

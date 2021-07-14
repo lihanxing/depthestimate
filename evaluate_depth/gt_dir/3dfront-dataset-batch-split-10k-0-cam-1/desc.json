@@ -1,8 +1,8 @@
 {
   "scene_id": "739ce449-ad29-4a8c-870a-ef7be4a5858b",
-  "img_id": "https://ossgw.alicdn.com/jia-render/floorplan/render/images/2021-06-17/DesignAdmin_8269068_739ce449-ad29-4a8c-870a-ef7be4a5858b_3dfront-batch-10k-20210616-0-cam-1_2_17979037_1623939670178/2fbdbf75-9757-40a4-b64d-58a743acacc7.jpg",
-  "depth_id": "https://ossgw.alicdn.com/homeai/code_muyu/data/3d_front/imgs_20210617/3dfront-batch-10k-20210616-0-cam-1/depth.png",
-  "normal_id": "https://ossgw.alicdn.com/jia-render/floorplan/render/images/2021-06-17/DesignAdmin_8269068_739ce449-ad29-4a8c-870a-ef7be4a5858b_3dfront-batch-10k-20210616-0-cam-1_2_17979037_1623939670178/normal.png",
+  "img_id": "https://ossgw.alicdn.com/jia-render/floorplan/render/images/2021-06-29/DesignAdmin_8413600_739ce449-ad29-4a8c-870a-ef7be4a5858b_3dfront-batch-10k-20210616-0-cam-1_2_18271292_1624976978096/4c894cd5-8282-4145-b3f9-580d70bac010.jpg",
+  "depth_id": "https://ossgw.alicdn.com/homeai/code_muyu/data/3d_front/imgs_20210630/3dfront-batch-10k-20210616-0-cam-1/depth.png",
+  "normal_id": "https://ossgw.alicdn.com/jia-render/floorplan/render/images/2021-06-29/DesignAdmin_8413600_739ce449-ad29-4a8c-870a-ef7be4a5858b_3dfront-batch-10k-20210616-0-cam-1_2_18271292_1624976978096/normal.png",
   "bbox_infos": {
     "camera": {
       "K": [

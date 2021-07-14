@@ -5,6 +5,7 @@ import matplotlib
 import time
 from PIL import Image
 import cv2
+import numpy as np
 
 # Keras / TensorFlow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
@@ -42,19 +43,34 @@ print('\nLoaded ({0}) images of size {1}.'.format(inputs.shape[0], inputs.shape[
 outputs = predict(model, inputs)
 
 #matplotlib problem on ubuntu terminal fix
-#matplotlib.use('TkAgg')   
+#matplotlib.use('TkAgg')
 
 #按时间保存预测后图片
-uuid_str = time.strftime("%Y-%m-%d %H-%M-%S",time.localtime()) 
+uuid_str = time.strftime("%Y-%m-%d %H-%M-%S",time.localtime())
 tmp_file_name ='%s.png' % uuid_str
 
 
 # output Images
 viz = display_images(outputs.copy())
-plt.figure(figsize=(6.59,6.59),dpi=100)
+# print(viz)
+#
+# viz = Image.fromarray(viz)
+
+plt.figure(figsize=(5.13,5.12),dpi=100)
 plt.imshow(viz)
 
 plt.gca().xaxis.set_major_locator(plt.NullLocator())
 plt.gca().yaxis.set_major_locator(plt.NullLocator())
+
+plt.axis('off')
+fig = plt.gcf()
+
+plt.gca().xaxis.set_major_locator(plt.NullLocator())
+plt.gca().yaxis.set_major_locator(plt.NullLocator())
+plt.subplots_adjust(top = 1, bottom = 0, right = 2, left = 0, hspace = 0, wspace = 0)
+plt.margins(0,0)
+
 plt.savefig(("%s"%args.output)+"/depth.png",bbox_inches='tight',pad_inches = 0)
-plt.show()
+# image_data = np.asarray(img)
+# # cv2.imshow('image',image_data)
+# cv2.imwrite('messigray.png',image_data)
