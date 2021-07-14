@@ -59,6 +59,7 @@ def evaluate_rmse(submit_path,standard_path):
         result_image=cv2.imread(result_path,cv2.IMREAD_GRAYSCALE)
         print(type(result_image))
         print(result_image.shape)
+        result_image = (1 - (result_image / 255.0)) * 10
         mmse=compute_rmse(result_image,gt_image,valid_mask)
         total_count+=1
         total_mmse+=mmse
