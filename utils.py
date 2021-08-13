@@ -62,6 +62,7 @@ def display_images(outputs, inputs=None, gt=None, is_colormap=True, is_rescale=T
 
         if is_colormap:
             rescaled = outputs[i][:,:,0]
+            
             if is_rescale:
                 rescaled = rescaled - np.min(rescaled)
                 rescaled = rescaled / np.max(rescaled)

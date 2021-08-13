@@ -15,8 +15,12 @@ def depth_loss_function(y_true, y_pred, theta=0.1, maxDepthVal=1000.0/10.0):
     l_ssim = K.clip((1 - tf.image.ssim(y_true, y_pred, maxDepthVal)) * 0.5, 0, 1)
 
     # Weights
-    w1 = 1.0
+    w1 = 1.2
     w2 = 1.0
     w3 = theta
+
+    # w3是λ*Ldepth
+   
+
 
     return (w1 * l_ssim) + (w2 * K.mean(l_edges)) + (w3 * K.mean(l_depth))

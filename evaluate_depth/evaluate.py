@@ -79,10 +79,10 @@ if __name__=="__main__":
         input_params = json.load(load_f)
 
     # 标准答案路径
-    standard_path="./gt_dir/"
+    standard_path="./gt_dir"
 
     # 选手提交的结果文件路径
-    submit_path="./result_dir/"
+    submit_path="../result_loss_1.9_1.42"
 
     mean_rmse=evaluate_rmse(submit_path,standard_path)
     report_score(mean_rmse,out_path)

@@ -7,7 +7,7 @@ from utils import predict, save_images, load_test_data
 from model import create_model
 from data import get_nyu_train_test_data, get_unreal_train_test_data
 from callbacks import get_nyu_callbacks
-
+# from torch.utils.tensorboard import SummaryWriter
 from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
 from keras.utils.vis_utils import plot_model
@@ -18,8 +18,8 @@ parser.add_argument('--data', default='nyu', type=str, help='Training dataset.')
 parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate')
 parser.add_argument('--bs', type=int, default=8, help='Batch size')
 parser.add_argument('--epochs', type=int, default=20, help='Number of epochs')
-parser.add_argument('--gpus', type=int, default=1, help='The number of GPUs to use')
-parser.add_argument('--gpuids', type=str, default='0', help='IDs of GPUs to use')
+parser.add_argument('--gpus', type=int, default=2, help='The number of GPUs to use')
+parser.add_argument('--gpuids', type=str, default='0,1', help='IDs of GPUs to use')
 parser.add_argument('--mindepth', type=float, default=10.0, help='Minimum of input depths')
 parser.add_argument('--maxdepth', type=float, default=1000.0, help='Maximum of input depths')
 parser.add_argument('--name', type=str, default='densedepth_nyu', help='A name to attach to the training session')
